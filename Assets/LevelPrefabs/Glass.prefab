@@ -138,6 +138,7 @@ MonoBehaviour:
   damageMultiplier: 2
   minImpactForce: 5
   spriteColour: {fileID: 0}
+  score: 500
 --- !u!61 &961524339453504287
 BoxCollider2D:
   m_ObjectHideFlags: 0

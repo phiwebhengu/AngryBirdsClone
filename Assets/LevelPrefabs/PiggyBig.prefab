@@ -134,10 +134,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e917ed351215c4c8b057015b3b5f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Destructible
-  maxHealth: 50
+  maxHealth: 20
   damageMultiplier: 5
-  minImpactForce: 7
+  minImpactForce: 3
   spriteColour: {fileID: 0}
+  score: 5000
 --- !u!58 &4441850232483326436
 CircleCollider2D:
   m_ObjectHideFlags: 0

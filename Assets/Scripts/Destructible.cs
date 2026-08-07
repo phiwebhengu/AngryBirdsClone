@@ -6,13 +6,16 @@ public class Destructible : MonoBehaviour,IDamageable
 {
     [SerializeField] private float maxHealth;
     private float currentHealth;
+    private ScoreManager scoreManager;
     [SerializeField] private float damageMultiplier;
     [SerializeField] private float minImpactForce;
 
     [SerializeField] private SpriteRenderer spriteColour;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private float score;
     void Awake()
     {
+        scoreManager = FindAnyObjectByType<ScoreManager>();
         spriteColour = GetComponent<SpriteRenderer>();
         currentHealth = maxHealth;
     }
@@ -40,7 +43,11 @@ public class Destructible : MonoBehaviour,IDamageable
 
         currentHealth -= damage;
         Debug.Log($"{gameObject.name} Has: {currentHealth} Health left");
-        UpdateDamageVisuals();  
+        UpdateDamageVisuals();
+        if (scoreManager != null)
+        {
+            scoreManager.UpdateScore(score);
+        }
         if (currentHealth <= 0)
         {
             Destroy(gameObject);
