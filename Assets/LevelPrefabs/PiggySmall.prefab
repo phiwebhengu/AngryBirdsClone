@@ -138,7 +138,8 @@ MonoBehaviour:
   damageMultiplier: 5
   minImpactForce: 3
   spriteColour: {fileID: 0}
-  score: 5000
+  score: 10
+  destroyedScore: 5000
 --- !u!58 &4314527413337567557
 CircleCollider2D:
   m_ObjectHideFlags: 0

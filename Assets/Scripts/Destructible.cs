@@ -13,6 +13,7 @@ public class Destructible : MonoBehaviour,IDamageable
     [SerializeField] private SpriteRenderer spriteColour;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] private float score;
+    [SerializeField] private float destroyedScore;
     void Awake()
     {
         scoreManager = FindAnyObjectByType<ScoreManager>();
@@ -28,7 +29,7 @@ public class Destructible : MonoBehaviour,IDamageable
             return;
         }
         float impactForce = collision.relativeVelocity.magnitude; //Convert Collision force to a float value
-        Debug.Log("Impact Force: " + impactForce);  
+        //Debug.Log("Impact Force: " + impactForce);  
         if (impactForce < minImpactForce)
         {
             return;  //Minumum force for damage to occur
@@ -39,17 +40,19 @@ public class Destructible : MonoBehaviour,IDamageable
     }
     public void TakeDamage(float damage)
     {
-        Debug.Log($"{gameObject.name} took {damage} damage.");
+        //Debug.Log($"{gameObject.name} took {damage} damage.");
 
         currentHealth -= damage;
-        Debug.Log($"{gameObject.name} Has: {currentHealth} Health left");
+        //Debug.Log($"{gameObject.name} Has: {currentHealth} Health left");
+        float scoreGained = damage + score;
         UpdateDamageVisuals();
         if (scoreManager != null)
         {
-            scoreManager.UpdateScore(score);
+            scoreManager.UpdateScore(scoreGained);
         }
         if (currentHealth <= 0)
         {
+            scoreManager.UpdateScore(destroyedScore);
             Destroy(gameObject);
         }
 
@@ -58,7 +61,7 @@ public class Destructible : MonoBehaviour,IDamageable
     {
         if (spriteColour != null)
         { 
-            Debug.Log("Updating Damage Visuals");
+        //    Debug.Log("Updating Damage Visuals");
 
             float healthPercent = currentHealth / maxHealth;
         Color color =spriteColour.color;
