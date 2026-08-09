@@ -1,3 +1,4 @@
+using CloneGame.Launch;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,11 +11,14 @@ public class GameManager : MonoBehaviour
         GameOver,
         Win
     }
-    private GameState currentState = GameState.FirstShot;
+   [SerializeField] private GameState currentState = GameState.FirstShot;
     [SerializeField] private GameObject levelDesign;
+    
     
     void Awake()
     {
+       
+
         Rigidbody2D[] rbs = levelDesign.GetComponentsInChildren<Rigidbody2D>();
     }
 
@@ -26,13 +30,13 @@ public class GameManager : MonoBehaviour
             case GameState.FirstShot:
 
                 SetAllRigidbodiesStatic();
-
-                if (Input.GetKey(KeyCode.Space)) //Remove the input when you do this because the bird must trigger this state or things wont be like angry birds this is just testing
-                { 
-                  currentState = GameState.Playing; 
-                
+                Bird bird = FindAnyObjectByType<Bird>();
+                if (bird != null && bird.IsFlying)
+                {
+                    currentState = GameState.Playing;
+                    
                 }
-                    break;
+                break;
             case GameState.Playing:
               
                     SetAllRigidbodiesDynamic(); //This is where the bird will trigger this state because yeah without this, the buildings go flying.
@@ -71,4 +75,10 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void RestartScene ()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+    
 }
