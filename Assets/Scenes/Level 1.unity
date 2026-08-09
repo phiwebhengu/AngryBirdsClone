@@ -458,7 +458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloneGame.Launch.SlingshotController
   pivot: {fileID: 2111143608}
-  birdPrefab: {fileID: 0}
+  birdPrefab: {fileID: 4117272716360482064, guid: 9aaab4c489507e64dac0b0086eb9096e, type: 3}
   maxPullDistance: 2.5
   launchForceMultiplier: 8
 --- !u!114 &684576393
@@ -487,27 +487,15 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents:
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 684576392}
-        m_TargetAssemblyTypeName: CloneGame.Launch.SlingshotController, Assembly-CSharp
-        m_MethodName: OnDragStart
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: 708fd7ad-d993-4b7e-a809-ab264eb1d3be
     m_ActionName: 'Slingshot/PointerPosition[/Mouse/position]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 684576392}
         m_TargetAssemblyTypeName: CloneGame.Launch.SlingshotController, Assembly-CSharp
-        m_MethodName: OnDragEnd
-        m_Mode: 1
+        m_MethodName: OnPointerPress
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1004,6 +992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a6e4487e94600147960d9043a62dc2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  levelDesign: {fileID: 0}
 --- !u!4 &1901981586 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4595781119702899446, guid: 473d1b059a1ee234080c5e70c42377e3, type: 3}

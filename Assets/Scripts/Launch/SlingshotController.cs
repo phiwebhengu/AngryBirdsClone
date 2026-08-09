@@ -22,14 +22,26 @@ namespace CloneGame.Launch
             UpdateAim(GetPointerWorldPosition());
         }
 
-        public void OnDragStart()
+        public void OnPointerPress(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                OnDragStart();
+            }
+            else if (context.canceled)
+            {
+                OnDragEnd();
+            }
+        }
+
+        private void OnDragStart()
         {
             if (!CanLaunch) return;
             isDragging = true;
             SpawnBirdAtPivot();
         }
 
-        public void OnDragEnd()
+        private void OnDragEnd()
         {
             if (!isDragging) return;
             isDragging = false;
