@@ -10,11 +10,23 @@ namespace CloneGame.Launch
         [SerializeField] private float maxPullDistance = 2.5f;
         [SerializeField] private float launchForceMultiplier = 8f;
 
+        [Header("Elastic Band")]
+        [SerializeField] private Transform leftAnchor;
+        [SerializeField] private Transform rightAnchor;
+        [SerializeField] private LineRenderer leftBand;
+        [SerializeField] private LineRenderer rightBand;
+
         private Bird currentBird;
         private Vector2 pullVector;
         private bool isDragging;
 
         public bool CanLaunch { get; private set; } = true;
+        public static event System.Action<Bird> OnBirdLaunched;
+
+        private void Start()
+        {
+            HideBands();
+        }
 
         private void Update()
         {
@@ -39,6 +51,7 @@ namespace CloneGame.Launch
             if (!CanLaunch) return;
             isDragging = true;
             SpawnBirdAtPivot();
+            ShowBands();
         }
 
         private void OnDragEnd()
@@ -53,13 +66,18 @@ namespace CloneGame.Launch
             Vector2 offset = pointerWorld - (Vector2)pivot.position;
             offset = Vector2.ClampMagnitude(offset, maxPullDistance);
             pullVector = offset;
-            currentBird.transform.position = pivot.position + (Vector3)pullVector;
+
+            Vector3 birdPos = pivot.position + (Vector3)pullVector;
+            currentBird.transform.position = birdPos;
+            UpdateBands(birdPos);
         }
 
         private void Launch()
         {
             Vector2 launchVelocity = -pullVector * launchForceMultiplier;
             currentBird.Launch(launchVelocity);
+            OnBirdLaunched?.Invoke(currentBird);
+            HideBands();
             CanLaunch = false;
         }
 
@@ -67,6 +85,26 @@ namespace CloneGame.Launch
         {
             currentBird = Instantiate(birdPrefab, pivot.position, Quaternion.identity);
             currentBird.SetHeld(true);
+        }
+
+        private void ShowBands()
+        {
+            leftBand.positionCount = 2;
+            rightBand.positionCount = 2;
+        }
+
+        private void HideBands()
+        {
+            leftBand.positionCount = 0;
+            rightBand.positionCount = 0;
+        }
+
+        private void UpdateBands(Vector3 birdPos)
+        {
+            leftBand.SetPosition(0, leftAnchor.position);
+            leftBand.SetPosition(1, birdPos);
+            rightBand.SetPosition(0, rightAnchor.position);
+            rightBand.SetPosition(1, birdPos);
         }
 
         private Vector2 GetPointerWorldPosition()
