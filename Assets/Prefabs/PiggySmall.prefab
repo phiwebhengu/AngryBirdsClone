@@ -141,6 +141,7 @@ MonoBehaviour:
   score: 10
   destroyedScore: 5000
   damagePopupPrefab: {fileID: 8180548884019905438, guid: 33f3f68bcf239cb40a49591f4771a1bd, type: 3}
+  redBirdMultiplier: 2.5
 --- !u!58 &4314527413337567557
 CircleCollider2D:
   m_ObjectHideFlags: 0

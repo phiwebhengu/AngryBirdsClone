@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4117272716360482064}
   m_Layer: 6
   m_Name: Bird
-  m_TagString: Untagged
+  m_TagString: Bird
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -170,3 +170,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3a830ba608039845b9ae29239c11208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloneGame.Launch.Bird
+  minRotationSpeed: 0.5

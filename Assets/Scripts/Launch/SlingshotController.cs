@@ -23,9 +23,16 @@ namespace CloneGame.Launch
         public bool CanLaunch { get; private set; } = true;
         public static event System.Action<Bird> OnBirdLaunched;
 
+        [Header("Bird Management")]
+        [SerializeField] private int totalBirds = 3; 
+        private int birdsRemaining;
+        private int birdsLaunched = 0;
+        private GameManager gameManager;
         private void Start()
         {
             HideBands();
+            birdsRemaining = totalBirds;
+            gameManager = FindAnyObjectByType<GameManager>();
         }
 
         private void Update()
@@ -78,7 +85,21 @@ namespace CloneGame.Launch
             currentBird.Launch(launchVelocity);
             OnBirdLaunched?.Invoke(currentBird);
             HideBands();
-            CanLaunch = false;
+
+            birdsLaunched++;
+            birdsRemaining--;
+
+            if (birdsRemaining <= 0)
+            {
+
+                CanLaunch = false;
+                Debug.Log("All birds launched. No more birds remaining.");
+                if (gameManager != null)
+                {
+                    gameManager.OnAllBirdsLaunched();
+                }
+            }
+          
         }
 
         private void SpawnBirdAtPivot()

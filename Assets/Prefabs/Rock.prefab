@@ -107,7 +107,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_GravityScale: 1
@@ -141,6 +141,7 @@ MonoBehaviour:
   score: 10
   destroyedScore: 100
   damagePopupPrefab: {fileID: 8180548884019905438, guid: 33f3f68bcf239cb40a49591f4771a1bd, type: 3}
+  redBirdMultiplier: 2.5
 --- !u!58 &458215530885048430
 CircleCollider2D:
   m_ObjectHideFlags: 0

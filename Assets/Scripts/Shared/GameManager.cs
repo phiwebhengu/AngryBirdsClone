@@ -13,13 +13,16 @@ public class GameManager : MonoBehaviour
     }
    [SerializeField] private GameState currentState = GameState.FirstShot;
     [SerializeField] private GameObject levelDesign;
-    
-    
+    public GameObject loseScreen;
+    public GameObject winScreen;
+
     void Awake()
     {
        
 
         Rigidbody2D[] rbs = levelDesign.GetComponentsInChildren<Rigidbody2D>();
+        winScreen.SetActive(false);
+        loseScreen.SetActive(false);
     }
 
 
@@ -75,7 +78,47 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    public void OnAllBirdsLaunched()
+    {
+        
+        CheckForGameOver();
+    }
 
+    private void CheckForGameOver()
+    {
+      
+        Invoke("DelayedGameOverCheck", 3f);
+    }
+
+    private void DelayedGameOverCheck()
+    {
+      
+        bool hasTargetsRemaining = CheckTargetsRemaining();
+
+        if (hasTargetsRemaining)
+        {
+            currentState = GameState.GameOver;
+            
+            Debug.Log("Game Over! You lost!");
+            loseScreen.SetActive(true);
+           
+        }
+        else
+        {
+            currentState = GameState.Win;
+            Debug.Log("You Win!");
+            winScreen.SetActive(true);
+        }
+    }
+
+    private bool CheckTargetsRemaining() 
+    {
+        //For letstatsi if not done by tuesday just do it  if he wants it
+
+        //It must return true if pigs are still alive , false if all pigs are slaugthered
+        return true; 
+        //winScreen.SetActive(true);
+    }
     public void RestartScene ()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
