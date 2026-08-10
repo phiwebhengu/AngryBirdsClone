@@ -16,6 +16,8 @@ public class Destructible : MonoBehaviour, IDamageable
     [SerializeField] private float destroyedScore;
     [SerializeField] private DamagePopup damagePopupPrefab;
 
+    [Header("Bird types Damage Multipliers")]
+    public float redBirdMultiplier = 1.5f; 
     void Awake()
     {
         scoreManager = FindAnyObjectByType<ScoreManager>();
@@ -37,7 +39,13 @@ public class Destructible : MonoBehaviour, IDamageable
             return;  //Minumum force for damage to occur
         }
         float damage = impactForce * damageMultiplier;
-
+        if (collision.gameObject.CompareTag("Bird"))   //Can tweak values based on which bird is doing what like yellow bird does more damage to wood, blue bird does more damage to glass, etc.
+        {
+            //This is for red (Red bird so he just has a flat damage multipler for everything he hits)
+           
+            damage *= redBirdMultiplier;
+            Debug.Log($"Bird hit! Damage multiplied by {redBirdMultiplier}");
+        }
         TakeDamage(damage);
     }
     public void TakeDamage(float damage)
