@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4441850232483326436}
   m_Layer: 0
   m_Name: PiggyBig
-  m_TagString: Untagged
+  m_TagString: Pig
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

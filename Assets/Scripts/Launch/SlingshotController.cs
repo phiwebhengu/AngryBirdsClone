@@ -24,8 +24,8 @@ namespace CloneGame.Launch
         public static event System.Action<Bird> OnBirdLaunched;
 
         [Header("Bird Management")]
-        [SerializeField] private int totalBirds = 3; 
-        private int birdsRemaining;
+        [SerializeField] private int totalBirds = 3;
+        public int birdsRemaining;
         private int birdsLaunched = 0;
         private GameManager gameManager;
         private void Start()
@@ -99,7 +99,7 @@ namespace CloneGame.Launch
                     gameManager.OnAllBirdsLaunched();
                 }
             }
-          
+
         }
 
         private void SpawnBirdAtPivot()
@@ -133,5 +133,13 @@ namespace CloneGame.Launch
             Vector2 screenPos = Pointer.current.position.ReadValue();
             return Camera.main.ScreenToWorldPoint(screenPos);
         }
-    }
+    
+
+    public int GetRemainingBirdsCount()
+        {
+            return birdsRemaining;
+        }
+
+        
+    } 
 }

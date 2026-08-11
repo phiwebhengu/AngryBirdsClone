@@ -1,5 +1,7 @@
 using CloneGame.Launch;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,7 +17,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject levelDesign;
     public GameObject loseScreen;
     public GameObject winScreen;
-
+    [SerializeField]private GameObject[] remainingPigs;
+    [SerializeField] private GameObject bonusPopupPrefab;
     void Awake()
     {
        
@@ -23,15 +26,17 @@ public class GameManager : MonoBehaviour
         Rigidbody2D[] rbs = levelDesign.GetComponentsInChildren<Rigidbody2D>();
         winScreen.SetActive(false);
         loseScreen.SetActive(false);
+       
     }
 
 
     void Update()
     {
+        remainingPigs = GameObject.FindGameObjectsWithTag("Pig");
         switch (currentState)
         {
             case GameState.FirstShot:
-
+                Time.timeScale= 1f;
                 SetAllRigidbodiesStatic();
                 Bird bird = FindAnyObjectByType<Bird>();
                 if (bird != null && bird.IsFlying)
@@ -41,15 +46,20 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.Playing:
-              
-                    SetAllRigidbodiesDynamic(); //This is where the bird will trigger this state because yeah without this, the buildings go flying.
-                   
+              Time.timeScale = 1f;
+                SetAllRigidbodiesDynamic(); //This is where the bird will trigger this state because yeah without this, the buildings go flying.
+                  if(remainingPigs.Length<=0)
+                {
+                    CheckForGameOver();
+                }
                 break;
             case GameState.Paused:
                 break;
             case GameState.GameOver:
+                Time.timeScale = 0f; // Pause the game when the player loses
                 break;
             case GameState.Win:
+                Time.timeScale = 0f; // Pause the game when the player wins
                 break;
 
         }
@@ -105,6 +115,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            AwardBonusPointsForRemainingBirds();
             currentState = GameState.Win;
             Debug.Log("You Win!");
             winScreen.SetActive(true);
@@ -113,15 +124,63 @@ public class GameManager : MonoBehaviour
 
     private bool CheckTargetsRemaining() 
     {
-        //For letstatsi if not done by tuesday just do it  if he wants it
-
-        //It must return true if pigs are still alive , false if all pigs are slaugthered
+        
+        Debug.Log("Remaining pigs: " + remainingPigs.Length);
+        if (remainingPigs.Length <= 0)
+        {
+            
+            return false;
+        }
         return true; 
         //winScreen.SetActive(true);
+    }
+    private void AwardBonusPointsForRemainingBirds()
+    {
+
+        SlingshotController slingshot = FindAnyObjectByType<SlingshotController>();
+        if (slingshot != null)
+        {
+
+            int remainingBirds = slingshot.GetRemainingBirdsCount();
+
+            if (remainingBirds > 0)
+            {
+                int bonusPoints = remainingBirds * 10000;
+
+                ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
+                if (scoreManager != null)
+                {
+                    scoreManager.UpdateScore(bonusPoints);
+                    Debug.Log($"🎉 BONUS: {bonusPoints} points for {remainingBirds} remaining birds!");
+                }
+            }
+        }
+    }
+    private void ShowBonusPopup(int bonusPoints) //If i have time 
+    {
+        if (bonusPopupPrefab != null)
+        {
+            GameObject popup = Instantiate(bonusPopupPrefab, winScreen.transform);
+            TextMeshProUGUI text = popup.GetComponent<TextMeshProUGUI>();
+            if (text != null)
+            {
+                text.text = $"+{bonusPoints} BONUS!";
+            }
+            Destroy(popup, 2f); // Auto-destroy after 2 seconds
+        }
     }
     public void RestartScene ()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
-    
+
+    public void LoadMainMenu()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+    public void LoadNextScene()
+    {
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        SceneManager.LoadScene(nextSceneIndex);
+    }
 }
