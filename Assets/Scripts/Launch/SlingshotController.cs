@@ -28,7 +28,7 @@ namespace CloneGame.Launch
         public int birdsRemaining;
         private int birdsLaunched = 0;
         private GameManager gameManager;
-        private void Start()
+       
         private void Awake()
         {
             HideBands();
