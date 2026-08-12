@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace CloneGame.Launch
         [SerializeField] private Transform[] waitingSlots;
         [SerializeField] private int totalBirds = 4;
         [SerializeField] private float reloadHopSpeed = 6f;
+        [SerializeField] private float despawnDelay = 2.5f;
 
         private readonly Queue<Bird> waitingBirds = new Queue<Bird>();
         private Bird birdMovingToSlot;
@@ -51,7 +53,17 @@ namespace CloneGame.Launch
 
         private void HandleBirdLaunched(Bird bird)
         {
-            bird.OnSettled += () => LoadNextBird();
+            bird.OnSettled += () =>
+            {
+                LoadNextBird();
+                StartCoroutine(DespawnAfterDelay(bird, despawnDelay));
+            };
+        }
+
+        private IEnumerator DespawnAfterDelay(Bird bird, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (bird != null) Destroy(bird.gameObject);
         }
 
         private void LoadNextBird()

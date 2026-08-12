@@ -31,5 +31,10 @@ namespace CloneGame.Launch
                 transform.position = Vector3.Lerp(transform.position, homePosition, returnSpeed * Time.deltaTime);
             }
         }
+
+        public void SkipToHome()
+        {
+            transform.position = homePosition;
+        }
     }
 }
