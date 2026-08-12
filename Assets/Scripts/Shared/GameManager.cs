@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
         Rigidbody2D[] rbs = levelDesign.GetComponentsInChildren<Rigidbody2D>();
         winScreen.SetActive(false);
         loseScreen.SetActive(false);
+        
        
     }
 
@@ -38,17 +39,22 @@ public class GameManager : MonoBehaviour
             case GameState.FirstShot:
                 Time.timeScale= 1f;
                 SetAllRigidbodiesStatic();
-                Bird bird = FindAnyObjectByType<Bird>();
+                SetStateToPlay();
+                Bird bird = FindAnyObjectByType<Bird>(); 
+                if (bird == null )
+        {
+            Debug.LogError("No Bird found in the scene.WTF");
+        }
                 if (bird != null && bird.IsFlying)
                 {
                     currentState = GameState.Playing;
-                    
+                    SetAllRigidbodiesDynamic();
                 }
                 break;
             case GameState.Playing:
-              Time.timeScale = 1f;
-                SetAllRigidbodiesDynamic(); //This is where the bird will trigger this state because yeah without this, the buildings go flying.
-                  if(remainingPigs.Length<=0)
+              Time.timeScale = 1f; SetAllRigidbodiesDynamic();
+                //This is where the bird will trigger this state because yeah without this, the buildings go flying.
+                if (remainingPigs.Length<=0)
                 {
                     CheckForGameOver();
                 }
@@ -64,6 +70,19 @@ public class GameManager : MonoBehaviour
 
         }
 
+    }
+    void SetStateToPlay()
+    {
+        int waitTime = 5;
+
+        for (int i = 0; i <= waitTime; i++)
+        {
+           
+            if (i == waitTime)
+            {
+                currentState = GameState.Playing;
+            }
+        }
     }
     void SetAllRigidbodiesStatic()
     {

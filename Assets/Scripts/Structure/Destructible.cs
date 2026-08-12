@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Destructible : MonoBehaviour, IDamageable
@@ -11,32 +10,31 @@ public class Destructible : MonoBehaviour, IDamageable
     [SerializeField] private float minImpactForce;
 
     [SerializeField] private SpriteRenderer spriteColour;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] private float score;
     [SerializeField] private float destroyedScore;
     [SerializeField] private DamagePopup damagePopupPrefab;
+    [SerializeField] private float breakFadeDuration = 0.25f;
 
     [Header("Bird types Damage Multipliers")]
     public float redBirdMultiplier = 1.5f; 
     void Awake()
     {
         scoreManager = FindAnyObjectByType<ScoreManager>();
-        spriteColour = FindAnyObjectByType<SpriteRenderer>();
+        if (spriteColour == null) spriteColour = GetComponent<SpriteRenderer>();
         currentHealth = maxHealth;
     }
+
     private void OnCollisionEnter2D(UnityEngine.Collision2D collision)
     {
-        Rigidbody2D rb = collision.rigidbody;  //Run a check with the RB
+        Rigidbody2D rb = collision.rigidbody;
         if (rb == null)
         {
-            Debug.Log("No Rigidbody2D found on collison");
             return;
         }
-        float impactForce = collision.relativeVelocity.magnitude; //Convert Collision force to a float value
-        //Debug.Log("Impact Force: " + impactForce);  
+        float impactForce = collision.relativeVelocity.magnitude;
         if (impactForce < minImpactForce)
         {
-            return;  //Minumum force for damage to occur
+            return;
         }
         float damage = impactForce * damageMultiplier;
         if (collision.gameObject.CompareTag("Bird"))   //Can tweak values based on which bird is doing what like yellow bird does more damage to wood, blue bird does more damage to glass, etc.
@@ -48,14 +46,13 @@ public class Destructible : MonoBehaviour, IDamageable
         }
         TakeDamage(damage);
     }
+
     public void TakeDamage(float damage)
     {
-        //Debug.Log($"{gameObject.name} took {damage} damage.");
-
         currentHealth -= damage;
-        //Debug.Log($"{gameObject.name} Has: {currentHealth} Health left");
         float scoreGained = damage + score;
         UpdateDamageVisuals();
+
         if (scoreManager != null)
         {
             scoreManager.UpdateScore(scoreGained);
@@ -63,58 +60,69 @@ public class Destructible : MonoBehaviour, IDamageable
 
         if (damagePopupPrefab != null)
         {
-            Vector3 spawnPos = transform.position + new Vector3(0f, 0.5f, 0f); 
-            DamagePopup popup = Instantiate(
-                damagePopupPrefab,
-                spawnPos,
-                Quaternion.identity
-            );
+            Vector3 spawnPos = transform.position + new Vector3(0f, 0.5f, 0f);
+            DamagePopup popup = Instantiate(damagePopupPrefab, spawnPos, Quaternion.identity);
             popup.ShowPopup(scoreGained);
         }
+
         if (currentHealth <= 0)
         {
             OnDeath();
         }
-
     }
-    void UpdateDamageVisuals() //Doing this because they want visual feedback if we do sprites for the blocks update here
+
+    void UpdateDamageVisuals()
     {
         if (spriteColour != null)
         {
-            //    Debug.Log("Updating Damage Visuals");
-
             float healthPercent = currentHealth / maxHealth;
             Color color = spriteColour.color;
-            if (healthPercent <= 0.3f) //30% health or less, make the sprite semi-transparent   
+            if (healthPercent <= 0.3f)
             {
-                color.a = 0.3f; // Make the sprite semi-transparent
+                color.a = 0.3f;
             }
-            else if (healthPercent <= 0.6f) //60% left
+            else if (healthPercent <= 0.6f)
             {
-                color.a = 0.6f; // Make the sprite partially transparent
+                color.a = 0.6f;
             }
             else
             {
                 color = Color.white;
             }
+            spriteColour.color = color;
         }
-
     }
+
     private void OnDeath()
     {
-
         if (damagePopupPrefab != null)
         {
             Vector3 spawnPos = transform.position + new Vector3(0f, 0.5f, 0f);
-            DamagePopup popup = Instantiate(
-                damagePopupPrefab,
-                spawnPos,
-                Quaternion.identity
-            );
+            DamagePopup popup = Instantiate(damagePopupPrefab, spawnPos, Quaternion.identity);
             popup.ShowPopup(destroyedScore);
+        }
 
+        if (scoreManager != null)
+        {
             scoreManager.UpdateScore(destroyedScore);
         }
+
+        StartCoroutine(BreakAndDestroy());
+    }
+
+    private System.Collections.IEnumerator BreakAndDestroy()
+    {
+        float elapsed = 0f;
+        Vector3 startScale = transform.localScale;
+
+        while (elapsed < breakFadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / breakFadeDuration;
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            yield return null;
+        }
+
         Destroy(gameObject);
     }
 }

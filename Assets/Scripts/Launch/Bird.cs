@@ -6,10 +6,16 @@ namespace CloneGame.Launch
     public class Bird : MonoBehaviour
     {
         [SerializeField] private float minRotationSpeed = 0.5f;
+        [SerializeField] private float settleVelocityThreshold = 0.01f;
+        [SerializeField] private float settleTimeRequired = 0.2f;
 
         private Rigidbody2D rb;
-        public bool IsFlying { get; private set; }
+        private float settleTimer;
+        private bool hasSettled;
 
+        public bool IsFlying { get; private set; }
+        public event System.Action OnSettled;
+        public event System.Action OnBirdStopped;
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -19,11 +25,27 @@ namespace CloneGame.Launch
 
         private void FixedUpdate()
         {
-            if (!IsFlying) return;
-            if (rb.linearVelocity.magnitude < minRotationSpeed) return;
+            if (!IsFlying || hasSettled) return;
 
-            float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
-            rb.MoveRotation(angle);
+            if (rb.linearVelocity.magnitude >= minRotationSpeed)
+            {
+                float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
+                rb.MoveRotation(angle);
+            }
+
+            if (rb.linearVelocity.magnitude < settleVelocityThreshold)
+            {
+                settleTimer += Time.fixedDeltaTime;
+                if (settleTimer >= settleTimeRequired)
+                {
+                    hasSettled = true;
+                    OnSettled?.Invoke(); OnBirdStopped?.Invoke();
+                }
+            }
+            else
+            {
+                settleTimer = 0f;
+            }
         }
 
         public void SetHeld(bool held)
@@ -33,6 +55,8 @@ namespace CloneGame.Launch
             {
                 rb.linearVelocity = Vector2.zero;
                 IsFlying = false;
+                hasSettled = false;
+                settleTimer = 0f;
             }
         }
 
@@ -40,7 +64,7 @@ namespace CloneGame.Launch
         {
             SetHeld(false);
             rb.linearVelocity = velocity;
-            IsFlying = true;
+            IsFlying = true; Debug.Log("Bird launched! IsFlying = " + IsFlying);
         }
     }
 }
