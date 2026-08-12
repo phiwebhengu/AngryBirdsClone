@@ -6,9 +6,15 @@ namespace CloneGame.Launch
     public class Bird : MonoBehaviour
     {
         [SerializeField] private float minRotationSpeed = 0.5f;
+        [SerializeField] private float settleVelocityThreshold = 0.15f;
+        [SerializeField] private float settleTimeRequired = 1f;
 
         private Rigidbody2D rb;
+        private float settleTimer;
+        private bool hasSettled;
+
         public bool IsFlying { get; private set; }
+        public event System.Action OnSettled;
 
         private void Awake()
         {
@@ -19,11 +25,27 @@ namespace CloneGame.Launch
 
         private void FixedUpdate()
         {
-            if (!IsFlying) return;
-            if (rb.linearVelocity.magnitude < minRotationSpeed) return;
+            if (!IsFlying || hasSettled) return;
 
-            float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
-            rb.MoveRotation(angle);
+            if (rb.linearVelocity.magnitude >= minRotationSpeed)
+            {
+                float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
+                rb.MoveRotation(angle);
+            }
+
+            if (rb.linearVelocity.magnitude < settleVelocityThreshold)
+            {
+                settleTimer += Time.fixedDeltaTime;
+                if (settleTimer >= settleTimeRequired)
+                {
+                    hasSettled = true;
+                    OnSettled?.Invoke();
+                }
+            }
+            else
+            {
+                settleTimer = 0f;
+            }
         }
 
         public void SetHeld(bool held)
@@ -33,6 +55,8 @@ namespace CloneGame.Launch
             {
                 rb.linearVelocity = Vector2.zero;
                 IsFlying = false;
+                hasSettled = false;
+                settleTimer = 0f;
             }
         }
 
