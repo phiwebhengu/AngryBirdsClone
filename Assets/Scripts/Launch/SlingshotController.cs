@@ -6,7 +6,6 @@ namespace CloneGame.Launch
     public class SlingshotController : MonoBehaviour
     {
         [SerializeField] private Transform pivot;
-        [SerializeField] private Bird birdPrefab;
         [SerializeField] private float maxPullDistance = 2.5f;
         [SerializeField] private float launchForceMultiplier = 8f;
 
@@ -15,6 +14,7 @@ namespace CloneGame.Launch
         [SerializeField] private Transform rightAnchor;
         [SerializeField] private LineRenderer leftBand;
         [SerializeField] private LineRenderer rightBand;
+        [SerializeField] private Color bandColor = new Color(0.35f, 0.2f, 0.1f);
 
         private Bird currentBird;
         private Vector2 pullVector;
@@ -23,9 +23,22 @@ namespace CloneGame.Launch
         public bool CanLaunch { get; private set; } = true;
         public static event System.Action<Bird> OnBirdLaunched;
 
-        private void Start()
+        private void Awake()
         {
-            HideBands();
+            EnsureBandMaterial(leftBand);
+            EnsureBandMaterial(rightBand);
+        }
+
+        private void Start() => HideBands();
+
+        private void EnsureBandMaterial(LineRenderer band)
+        {
+            if (band.sharedMaterial != null) return;
+            var mat = new Material(Shader.Find("Sprites/Default"));
+            mat.color = bandColor;
+            band.material = mat;
+            band.startWidth = 0.08f;
+            band.endWidth = 0.08f;
         }
 
         private void Update()
@@ -36,21 +49,14 @@ namespace CloneGame.Launch
 
         public void OnPointerPress(InputAction.CallbackContext context)
         {
-            if (context.started)
-            {
-                OnDragStart();
-            }
-            else if (context.canceled)
-            {
-                OnDragEnd();
-            }
+            if (context.started) OnDragStart();
+            else if (context.canceled) OnDragEnd();
         }
 
         private void OnDragStart()
         {
-            if (!CanLaunch) return;
+            if (!CanLaunch || currentBird == null) return;
             isDragging = true;
-            SpawnBirdAtPivot();
             ShowBands();
         }
 
@@ -79,12 +85,15 @@ namespace CloneGame.Launch
             OnBirdLaunched?.Invoke(currentBird);
             HideBands();
             CanLaunch = false;
+            currentBird = null;
         }
 
-        private void SpawnBirdAtPivot()
+        public void LoadBird(Bird bird)
         {
-            currentBird = Instantiate(birdPrefab, pivot.position, Quaternion.identity);
+            currentBird = bird;
+            currentBird.transform.position = pivot.position;
             currentBird.SetHeld(true);
+            CanLaunch = true;
         }
 
         private void ShowBands()
