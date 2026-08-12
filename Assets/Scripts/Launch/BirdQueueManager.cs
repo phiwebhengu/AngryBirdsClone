@@ -21,7 +21,7 @@ namespace CloneGame.Launch
 
         private void Start()
         {
-            for (int i = 0; i < totalBirds; i++)
+            for (int i = 0; i < slingshot.BirdsRemaining; i++)
             {
                 Transform slot = waitingSlots[Mathf.Min(i, waitingSlots.Length - 1)];
                 Bird bird = Instantiate(birdPrefab, slot.position, Quaternion.identity);
@@ -68,6 +68,12 @@ namespace CloneGame.Launch
 
         private void LoadNextBird()
         {
+            if (slingshot.BirdsRemaining <= 0 || waitingBirds.Count == 0)  
+            { 
+                Debug.Log("No more birds to load"); 
+                return;  
+            }  
+
             if (waitingBirds.Count == 0) return;
 
             Bird next = waitingBirds.Dequeue();

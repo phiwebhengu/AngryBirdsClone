@@ -879,37 +879,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1647658626724164583, guid: f823e9949a30941429eeefe8dd17b9a2, type: 3}
   m_PrefabInstance: {fileID: 1081807247}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &467013980
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 467013981}
-  m_Layer: 0
-  m_Name: WaitingSlot2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &467013981
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 467013980}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.13, y: -5.49, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &288655146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1671,6 +1640,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 464300844}
   m_CullTransparentMesh: 1
+--- !u!1 &467013980
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 467013981}
+  m_Layer: 0
+  m_Name: WaitingSlot2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &467013981
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 467013980}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.13, y: -5.49, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1824,6 +1824,7 @@ MonoBehaviour:
   followSpeed: 4
   returnSpeed: 3
   minVelocityToFollow: 1
+  homePosition: {x: -16.9, y: 0, z: -10}
 --- !u!1 &570158243
 GameObject:
   m_ObjectHideFlags: 0
@@ -2094,7 +2095,7 @@ MonoBehaviour:
   leftBand: {fileID: 1793658804}
   rightBand: {fileID: 1543534638}
   bandColor: {r: 0.35, g: 0.2, b: 0.1, a: 1}
-  totalBirds: 6
+  totalBirds: 3
 --- !u!114 &684576393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2418,6 +2419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   scoreText: {fileID: 1150533786}
+  highScoreText: {fileID: 1300474187}
 --- !u!4 &912141586
 Transform:
   m_ObjectHideFlags: 0
@@ -3109,7 +3111,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -2.94, z: 0}
-  m_LocalScale: {x: 37.335094, y: 1, z: 1}
+  m_LocalScale: {x: 96.76137, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

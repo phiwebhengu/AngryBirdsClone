@@ -25,14 +25,14 @@ namespace CloneGame.Launch
 
         [Header("Bird Management")]
         [SerializeField] private int totalBirds = 3;
-        public int birdsRemaining;
+        public int BirdsRemaining => totalBirds - birdsLaunched;
         private int birdsLaunched = 0;
         private GameManager gameManager;
        
         private void Awake()
         {
             HideBands();
-            birdsRemaining = totalBirds;
+          
             gameManager = FindAnyObjectByType<GameManager>();
             EnsureBandMaterial(leftBand);
             EnsureBandMaterial(rightBand);
@@ -54,6 +54,7 @@ namespace CloneGame.Launch
         {
             if (!CanLaunch || !isDragging) return;
             UpdateAim(GetPointerWorldPosition());
+         
         }
 
         public void OnPointerPress(InputAction.CallbackContext context)
@@ -95,9 +96,9 @@ namespace CloneGame.Launch
             HideBands();
 
             birdsLaunched++;
-            birdsRemaining--;
+            
 
-            if (birdsRemaining <= 0)
+            if (BirdsRemaining <= 0)
             {
 
                 CanLaunch = false;
@@ -114,6 +115,11 @@ namespace CloneGame.Launch
 
         public void LoadBird(Bird bird)
         {
+            if (BirdsRemaining <= 0)  
+            {
+                Debug.Log("No birds remaining to load");  
+                return;  
+            }  
             currentBird = bird;
             currentBird.transform.position = pivot.position;
             currentBird.SetHeld(true);
@@ -149,7 +155,7 @@ namespace CloneGame.Launch
 
     public int GetRemainingBirdsCount()
         {
-            return birdsRemaining;
+            return BirdsRemaining;
         }
 
         

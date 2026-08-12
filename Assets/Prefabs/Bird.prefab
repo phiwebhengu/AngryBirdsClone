@@ -171,3 +171,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloneGame.Launch.Bird
   minRotationSpeed: 0.5
+  settleVelocityThreshold: 2.91
+  settleTimeRequired: 1

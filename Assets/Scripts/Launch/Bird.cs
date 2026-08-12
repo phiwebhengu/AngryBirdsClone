@@ -6,8 +6,8 @@ namespace CloneGame.Launch
     public class Bird : MonoBehaviour
     {
         [SerializeField] private float minRotationSpeed = 0.5f;
-        [SerializeField] private float settleVelocityThreshold = 0.15f;
-        [SerializeField] private float settleTimeRequired = 1f;
+        [SerializeField] private float settleVelocityThreshold = 0.01f;
+        [SerializeField] private float settleTimeRequired = 0.2f;
 
         private Rigidbody2D rb;
         private float settleTimer;
@@ -15,7 +15,7 @@ namespace CloneGame.Launch
 
         public bool IsFlying { get; private set; }
         public event System.Action OnSettled;
-
+        public event System.Action OnBirdStopped;
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -39,7 +39,7 @@ namespace CloneGame.Launch
                 if (settleTimer >= settleTimeRequired)
                 {
                     hasSettled = true;
-                    OnSettled?.Invoke();
+                    OnSettled?.Invoke(); OnBirdStopped?.Invoke();
                 }
             }
             else
@@ -64,7 +64,7 @@ namespace CloneGame.Launch
         {
             SetHeld(false);
             rb.linearVelocity = velocity;
-            IsFlying = true;
+            IsFlying = true; Debug.Log("Bird launched! IsFlying = " + IsFlying);
         }
     }
 }
