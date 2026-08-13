@@ -876,7 +876,8 @@ GameObject:
   m_Component:
   - component: {fileID: 111156494}
   m_Layer: 0
-  m_Name: LevelDesign
+  m_Name: LevelDesign Pssssst drag me here im going to make this ugly hierarchy look
+    nice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
