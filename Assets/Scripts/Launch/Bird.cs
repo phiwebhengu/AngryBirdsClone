@@ -14,8 +14,10 @@ namespace CloneGame.Launch
         private bool hasSettled;
 
         public bool IsFlying { get; private set; }
+        public float CurrentSpeed => rb.linearVelocity.magnitude;
         public event System.Action OnSettled;
         public event System.Action OnBirdStopped;
+
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -39,7 +41,8 @@ namespace CloneGame.Launch
                 if (settleTimer >= settleTimeRequired)
                 {
                     hasSettled = true;
-                    OnSettled?.Invoke(); OnBirdStopped?.Invoke();
+                    OnSettled?.Invoke();
+                    OnBirdStopped?.Invoke();
                 }
             }
             else
@@ -64,7 +67,7 @@ namespace CloneGame.Launch
         {
             SetHeld(false);
             rb.linearVelocity = velocity;
-            IsFlying = true; Debug.Log("Bird launched! IsFlying = " + IsFlying);
+            IsFlying = true;
         }
     }
 }

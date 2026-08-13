@@ -16,29 +16,26 @@ namespace CloneGame.Launch
         [SerializeField] private LineRenderer rightBand;
         [SerializeField] private Color bandColor = new Color(0.35f, 0.2f, 0.1f);
 
+        [Header("Bird Management")]
+        [SerializeField] private int totalBirds = 3;
+
         private Bird currentBird;
         private Vector2 pullVector;
         private bool isDragging;
-
-        public bool CanLaunch { get; private set; } = true;
-        public static event System.Action<Bird> OnBirdLaunched;
-
-        [Header("Bird Management")]
-        [SerializeField] private int totalBirds = 3;
-        public int BirdsRemaining => totalBirds - birdsLaunched;
         private int birdsLaunched = 0;
         private GameManager gameManager;
-       
+
+        public bool CanLaunch { get; private set; } = true;
+        public int BirdsRemaining => totalBirds - birdsLaunched;
+        public static event System.Action<Bird> OnBirdLaunched;
+
         private void Awake()
         {
-            HideBands();
-          
             gameManager = FindAnyObjectByType<GameManager>();
             EnsureBandMaterial(leftBand);
             EnsureBandMaterial(rightBand);
+            HideBands();
         }
-
-        private void Start() => HideBands();
 
         private void EnsureBandMaterial(LineRenderer band)
         {
@@ -54,7 +51,6 @@ namespace CloneGame.Launch
         {
             if (!CanLaunch || !isDragging) return;
             UpdateAim(GetPointerWorldPosition());
-         
         }
 
         public void OnPointerPress(InputAction.CallbackContext context)
@@ -96,30 +92,23 @@ namespace CloneGame.Launch
             HideBands();
 
             birdsLaunched++;
-            
+            CanLaunch = false;
+            currentBird = null;
 
             if (BirdsRemaining <= 0)
             {
-
-                CanLaunch = false;
                 Debug.Log("All birds launched. No more birds remaining.");
-                if (gameManager != null)
-                {
-                    gameManager.OnAllBirdsLaunched();
-                }
+                gameManager?.OnAllBirdsLaunched();
             }
-
-            CanLaunch = false;
-            currentBird = null;
         }
 
         public void LoadBird(Bird bird)
         {
-            if (BirdsRemaining <= 0)  
+            if (BirdsRemaining <= 0)
             {
-                Debug.Log("No birds remaining to load");  
-                return;  
-            }  
+                Debug.Log("No birds remaining to load");
+                return;
+            }
             currentBird = bird;
             currentBird.transform.position = pivot.position;
             currentBird.SetHeld(true);
@@ -151,13 +140,10 @@ namespace CloneGame.Launch
             Vector2 screenPos = Pointer.current.position.ReadValue();
             return Camera.main.ScreenToWorldPoint(screenPos);
         }
-    
 
-    public int GetRemainingBirdsCount()
+        public int GetRemainingBirdsCount()
         {
             return BirdsRemaining;
         }
-
-        
-    } 
+    }
 }

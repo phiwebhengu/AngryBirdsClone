@@ -9,7 +9,6 @@ namespace CloneGame.Launch
         [SerializeField] private SlingshotController slingshot;
         [SerializeField] private Bird birdPrefab;
         [SerializeField] private Transform[] waitingSlots;
-        [SerializeField] private int totalBirds = 4;
         [SerializeField] private float reloadHopSpeed = 6f;
         [SerializeField] private float despawnDelay = 2.5f;
 
@@ -68,13 +67,11 @@ namespace CloneGame.Launch
 
         private void LoadNextBird()
         {
-            if (slingshot.BirdsRemaining <= 0 || waitingBirds.Count == 0)  
-            { 
-                Debug.Log("No more birds to load"); 
-                return;  
-            }  
-
-            if (waitingBirds.Count == 0) return;
+            if (slingshot.BirdsRemaining <= 0 || waitingBirds.Count == 0)
+            {
+                Debug.Log("No more birds to load");
+                return;
+            }
 
             Bird next = waitingBirds.Dequeue();
             slingshot.LoadBird(next);
