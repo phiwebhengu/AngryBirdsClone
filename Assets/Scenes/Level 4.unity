@@ -2042,10 +2042,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a567ed33083e3f4b99f9301b4b9ae4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CloneGame.Launch.CameraFollow
+  homeAnchor: {fileID: 684576391}
+  homeOffset: {x: 0, y: 1.5, z: -10}
   followSpeed: 4
   returnSpeed: 3
   minVelocityToFollow: 1
-  homePosition: {x: -16.9, y: 0, z: -10}
+  postImpactHoldDuration: 1
+  minZoom: 3
+  maxZoom: 15
+  baseZoom: 6
+  maxFlightZoom: 10
+  zoomLerpSpeed: 2
+  zoomReferenceDistance: 12
+  scrollSensitivity: 0.05
+  playIntroPan: 1
+  introPanDuration: 1.4
+  introHoldDuration: 1.2
 --- !u!1001 &551341561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2443,7 +2455,6 @@ MonoBehaviour:
   - {fileID: 1628402868}
   - {fileID: 467013981}
   - {fileID: 1265722764}
-  totalBirds: 4
   reloadHopSpeed: 6
   despawnDelay: 2.5
 --- !u!1 &770066856

@@ -6,6 +6,11 @@ namespace CloneGame.Launch
 {
     public class CameraFollow : MonoBehaviour
     {
+        [Header("Home Anchor")]
+        [Tooltip("Assign the Slingshot's transform - home position is derived FROM this, not from wherever the camera happens to sit in the scene.")]
+        [SerializeField] private Transform homeAnchor;
+        [SerializeField] private Vector3 homeOffset = new Vector3(0f, 1.5f, -10f);
+
         [Header("Follow")]
         [SerializeField] private float followSpeed = 4f;
         [SerializeField] private float returnSpeed = 3f;
@@ -36,7 +41,18 @@ namespace CloneGame.Launch
         private void Awake()
         {
             cam = Camera.main;
-            homePosition = transform.position;
+
+            if (homeAnchor != null)
+            {
+                homePosition = homeAnchor.position + homeOffset;
+            }
+            else
+            {
+                Debug.LogWarning("CameraFollow: No homeAnchor assigned - falling back to the camera's own scene position, which may not be at the slingshot. Assign the Slingshot transform in the Inspector.");
+                homePosition = transform.position;
+            }
+
+            transform.position = homePosition;
             cam.orthographicSize = baseZoom;
         }
 
@@ -87,7 +103,7 @@ namespace CloneGame.Launch
                 noFlightTimer = 0f;
 
                 Vector3 targetPos = trackedBird.transform.position;
-                targetPos.z = transform.position.z;
+                targetPos.z = homePosition.z;
                 transform.position = Vector3.Lerp(transform.position, targetPos, followSpeed * Time.deltaTime);
 
                 float distanceFromHome = Vector3.Distance(transform.position, homePosition);
@@ -97,7 +113,6 @@ namespace CloneGame.Launch
             }
             else
             {
-
                 noFlightTimer += Time.deltaTime;
                 if (noFlightTimer < postImpactHoldDuration) return;
 
