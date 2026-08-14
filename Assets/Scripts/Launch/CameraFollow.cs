@@ -10,6 +10,7 @@ namespace CloneGame.Launch
         [SerializeField] private float followSpeed = 4f;
         [SerializeField] private float returnSpeed = 3f;
         [SerializeField] private float minVelocityToFollow = 1f;
+        [SerializeField] private float postImpactHoldDuration = 1f;
 
         [Header("Zoom")]
         [SerializeField] private float minZoom = 3f;
@@ -17,15 +18,17 @@ namespace CloneGame.Launch
         [SerializeField] private float baseZoom = 6f;
         [SerializeField] private float maxFlightZoom = 10f;
         [SerializeField] private float zoomLerpSpeed = 2f;
+        [SerializeField] private float zoomReferenceDistance = 12f;
         [SerializeField] private float scrollSensitivity = 0.05f;
 
         [Header("Level Intro Pan")]
         [SerializeField] private bool playIntroPan = true;
-        [SerializeField] private float introPanDuration = 1.2f;
-        [SerializeField] private float introHoldDuration = 0.6f;
+        [SerializeField] private float introPanDuration = 1.4f;
+        [SerializeField] private float introHoldDuration = 1.2f;
 
         private Vector3 homePosition;
         private float manualZoomOffset;
+        private float noFlightTimer;
         private Bird trackedBird;
         private Camera cam;
         private bool introPanPlaying;
@@ -49,7 +52,11 @@ namespace CloneGame.Launch
         private void OnEnable() => SlingshotController.OnBirdLaunched += HandleBirdLaunched;
         private void OnDisable() => SlingshotController.OnBirdLaunched -= HandleBirdLaunched;
 
-        private void HandleBirdLaunched(Bird bird) => trackedBird = bird;
+        private void HandleBirdLaunched(Bird bird)
+        {
+            trackedBird = bird;
+            noFlightTimer = 0f;
+        }
 
         private void Update()
         {
@@ -77,17 +84,23 @@ namespace CloneGame.Launch
 
             if (isActivelyFlying)
             {
+                noFlightTimer = 0f;
+
                 Vector3 targetPos = trackedBird.transform.position;
                 targetPos.z = transform.position.z;
                 transform.position = Vector3.Lerp(transform.position, targetPos, followSpeed * Time.deltaTime);
 
                 float distanceFromHome = Vector3.Distance(transform.position, homePosition);
-                float t = Mathf.Clamp01(distanceFromHome / 12f);
+                float t = Mathf.Clamp01(distanceFromHome / zoomReferenceDistance);
                 float targetZoom = Mathf.Lerp(baseZoom, maxFlightZoom, t) + manualZoomOffset;
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, zoomLerpSpeed * Time.deltaTime);
             }
             else
             {
+
+                noFlightTimer += Time.deltaTime;
+                if (noFlightTimer < postImpactHoldDuration) return;
+
                 transform.position = Vector3.Lerp(transform.position, homePosition, returnSpeed * Time.deltaTime);
                 float targetZoom = baseZoom + manualZoomOffset;
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, zoomLerpSpeed * Time.deltaTime);
@@ -95,6 +108,7 @@ namespace CloneGame.Launch
 
             cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
         }
+
         private IEnumerator IntroPanRoutine()
         {
             GameObject[] pigs = GameObject.FindGameObjectsWithTag("Pig");
@@ -112,15 +126,19 @@ namespace CloneGame.Launch
             }
             Vector3 panTarget = new Vector3(farthest.x, homePosition.y, homePosition.z);
 
+            float panDistance = Vector3.Distance(homePosition, panTarget);
+            float zoomT = Mathf.Clamp01(panDistance / zoomReferenceDistance);
+            float introTargetZoom = Mathf.Lerp(baseZoom, maxFlightZoom, zoomT);
+
             yield return new WaitForSeconds(0.3f);
 
             float t = 0f;
             while (t < introPanDuration)
             {
                 t += Time.deltaTime;
-                float p = t / introPanDuration;
+                float p = Mathf.SmoothStep(0f, 1f, t / introPanDuration);
                 transform.position = Vector3.Lerp(homePosition, panTarget, p);
-                cam.orthographicSize = Mathf.Lerp(baseZoom, maxFlightZoom, p);
+                cam.orthographicSize = Mathf.Lerp(baseZoom, introTargetZoom, p);
                 yield return null;
             }
 
@@ -130,9 +148,9 @@ namespace CloneGame.Launch
             while (t < introPanDuration)
             {
                 t += Time.deltaTime;
-                float p = t / introPanDuration;
+                float p = Mathf.SmoothStep(0f, 1f, t / introPanDuration);
                 transform.position = Vector3.Lerp(panTarget, homePosition, p);
-                cam.orthographicSize = Mathf.Lerp(maxFlightZoom, baseZoom, p);
+                cam.orthographicSize = Mathf.Lerp(introTargetZoom, baseZoom, p);
                 yield return null;
             }
 
@@ -145,6 +163,7 @@ namespace CloneGame.Launch
         {
             StopAllCoroutines();
             introPanPlaying = false;
+            noFlightTimer = postImpactHoldDuration;
             transform.position = homePosition;
             cam.orthographicSize = baseZoom + manualZoomOffset;
         }
