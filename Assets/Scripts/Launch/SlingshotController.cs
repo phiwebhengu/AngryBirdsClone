@@ -7,7 +7,8 @@ namespace CloneGame.Launch
     {
         [SerializeField] private Transform pivot;
         [SerializeField] private float maxPullDistance = 2.5f;
-        [SerializeField] private float launchForceMultiplier = 8f;
+        [SerializeField] private float minPullDistance = 0.3f;
+        [SerializeField] private float launchForceMultiplier = 10f;
 
         [Header("Elastic Band")]
         [SerializeField] private Transform leftAnchor;
@@ -70,6 +71,14 @@ namespace CloneGame.Launch
         {
             if (!isDragging) return;
             isDragging = false;
+
+            if (pullVector.magnitude < minPullDistance)
+            {
+                currentBird.transform.position = pivot.position;
+                HideBands();
+                return;
+            }
+
             Launch();
         }
 
