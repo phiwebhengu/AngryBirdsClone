@@ -2095,7 +2095,8 @@ MonoBehaviour:
   pivot: {fileID: 2111143608}
   maxPullDistance: 2.5
   minPullDistance: 1
-  launchForceMultiplier: 8
+  grabRadius: 1
+  launchForceMultiplier: 10
   leftAnchor: {fileID: 1755526478}
   rightAnchor: {fileID: 1122941931}
   leftBand: {fileID: 1793658804}
