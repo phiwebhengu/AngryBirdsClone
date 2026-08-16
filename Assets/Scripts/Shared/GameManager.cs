@@ -13,48 +13,45 @@ public class GameManager : MonoBehaviour
         GameOver,
         Win
     }
-   [SerializeField] private GameState currentState = GameState.FirstShot;
+
+    [SerializeField] private GameState currentState = GameState.FirstShot;
     [SerializeField] private GameObject levelDesign;
     public GameObject loseScreen;
     public GameObject winScreen;
-    [SerializeField]private GameObject[] remainingPigs;
+    [SerializeField] private GameObject[] remainingPigs;
     [SerializeField] private GameObject bonusPopupPrefab;
-    void Awake()
-    {
-       
 
-        Rigidbody2D[] rbs = levelDesign.GetComponentsInChildren<Rigidbody2D>();
+    private void Awake()
+    {
         winScreen.SetActive(false);
         loseScreen.SetActive(false);
-        
-       
+        SetAllRigidbodiesStatic();
     }
 
+    private void OnEnable() => SlingshotController.OnBirdLaunched += HandleBirdLaunched;
+    private void OnDisable() => SlingshotController.OnBirdLaunched -= HandleBirdLaunched;
 
-    void Update()
+    private void HandleBirdLaunched(Bird bird)
+    {
+        if (currentState == GameState.FirstShot)
+        {
+            currentState = GameState.Playing;
+            SetAllRigidbodiesDynamic();
+        }
+    }
+
+    private void Update()
     {
         remainingPigs = GameObject.FindGameObjectsWithTag("Pig");
         switch (currentState)
         {
             case GameState.FirstShot:
-                Time.timeScale= 1f;
-                SetAllRigidbodiesStatic();
-                SetStateToPlay();
-                Bird bird = FindAnyObjectByType<Bird>(); 
-                if (bird == null )
-        {
-            Debug.LogError("No Bird found in the scene.WTF");
-        }
-                if (bird != null && bird.IsFlying)
-                {
-                    currentState = GameState.Playing;
-                    SetAllRigidbodiesDynamic();
-                }
+                Time.timeScale = 1f;
+        
                 break;
             case GameState.Playing:
-              Time.timeScale = 1f; SetAllRigidbodiesDynamic();
-                //This is where the bird will trigger this state because yeah without this, the buildings go flying.
-                if (remainingPigs.Length<=0)
+                Time.timeScale = 1f;
+                if (remainingPigs.Length <= 0)
                 {
                     CheckForGameOver();
                 }
@@ -62,28 +59,14 @@ public class GameManager : MonoBehaviour
             case GameState.Paused:
                 break;
             case GameState.GameOver:
-                Time.timeScale = 0f; // Pause the game when the player loses
+                Time.timeScale = 0f;
                 break;
             case GameState.Win:
-                Time.timeScale = 0f; // Pause the game when the player wins
+                Time.timeScale = 0f;
                 break;
-
-        }
-
-    }
-    void SetStateToPlay()
-    {
-        int waitTime = 5;
-
-        for (int i = 0; i <= waitTime; i++)
-        {
-           
-            if (i == waitTime)
-            {
-                currentState = GameState.Playing;
-            }
         }
     }
+
     void SetAllRigidbodiesStatic()
     {
         Rigidbody2D[] rbs2d = levelDesign.GetComponentsInChildren<Rigidbody2D>();
@@ -93,9 +76,9 @@ public class GameManager : MonoBehaviour
             {
                 rb2d.bodyType = RigidbodyType2D.Static;
             }
-
         }
     }
+
     void SetAllRigidbodiesDynamic()
     {
         Rigidbody2D[] rbs2d = levelDesign.GetComponentsInChildren<Rigidbody2D>();
@@ -107,30 +90,26 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
     public void OnAllBirdsLaunched()
     {
-        
         CheckForGameOver();
     }
 
     private void CheckForGameOver()
     {
-      
-        Invoke("DelayedGameOverCheck", 3f);
+        Invoke(nameof(DelayedGameOverCheck), 3f);
     }
 
     private void DelayedGameOverCheck()
     {
-      
         bool hasTargetsRemaining = CheckTargetsRemaining();
 
         if (hasTargetsRemaining)
         {
             currentState = GameState.GameOver;
-            
             Debug.Log("Game Over! You lost!");
             loseScreen.SetActive(true);
-           
         }
         else
         {
@@ -141,41 +120,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool CheckTargetsRemaining() 
+    private bool CheckTargetsRemaining()
     {
-        
         Debug.Log("Remaining pigs: " + remainingPigs.Length);
-        if (remainingPigs.Length <= 0)
-        {
-            
-            return false;
-        }
-        return true; 
-        //winScreen.SetActive(true);
+        return remainingPigs.Length > 0;
     }
+
     private void AwardBonusPointsForRemainingBirds()
     {
-
         SlingshotController slingshot = FindAnyObjectByType<SlingshotController>();
         if (slingshot != null)
         {
-
             int remainingBirds = slingshot.GetRemainingBirdsCount();
-
             if (remainingBirds > 0)
             {
                 int bonusPoints = remainingBirds * 10000;
-
                 ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
                 if (scoreManager != null)
                 {
                     scoreManager.UpdateScore(bonusPoints);
-                    Debug.Log($"🎉 BONUS: {bonusPoints} points for {remainingBirds} remaining birds!");
+                    Debug.Log($"BONUS: {bonusPoints} points for {remainingBirds} remaining birds!");
                 }
             }
         }
     }
-    private void ShowBonusPopup(int bonusPoints) //If i have time 
+
+    private void ShowBonusPopup(int bonusPoints)
     {
         if (bonusPopupPrefab != null)
         {
@@ -185,18 +155,20 @@ public class GameManager : MonoBehaviour
             {
                 text.text = $"+{bonusPoints} BONUS!";
             }
-            Destroy(popup, 2f); // Auto-destroy after 2 seconds
+            Destroy(popup, 2f);
         }
     }
-    public void RestartScene ()
+
+    public void RestartScene()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void LoadMainMenu()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0);
     }
+
     public void LoadNextScene()
     {
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
