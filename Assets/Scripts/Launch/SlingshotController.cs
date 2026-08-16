@@ -8,6 +8,7 @@ namespace CloneGame.Launch
         [SerializeField] private Transform pivot;
         [SerializeField] private float maxPullDistance = 2.5f;
         [SerializeField] private float minPullDistance = 0.3f;
+        [SerializeField] private float grabRadius = 1f;
         [SerializeField] private float launchForceMultiplier = 10f;
 
         [Header("Elastic Band")]
@@ -63,6 +64,12 @@ namespace CloneGame.Launch
         private void OnDragStart()
         {
             if (!CanLaunch || currentBird == null) return;
+            Vector2 pressWorldPos = GetPointerWorldPosition();
+            if (Vector2.Distance(pressWorldPos, pivot.position) > grabRadius)
+            {
+                return;
+            }
+
             isDragging = true;
             ShowBands();
         }
