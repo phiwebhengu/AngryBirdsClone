@@ -2173,6 +2173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CloneGame.Launch.SlingshotController
   pivot: {fileID: 2111143608}
   maxPullDistance: 2.5
+  minPullDistance: 1
   launchForceMultiplier: 8
   leftAnchor: {fileID: 1755526478}
   rightAnchor: {fileID: 1122941931}
